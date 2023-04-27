@@ -1,5 +1,10 @@
 # ESP repository of cool DIY projects
 
+<!--toc:start-->
+- [ESP repository of cool DIY projects](#esp-repository-of-cool-diy-projects)
+  - [Interesting links](#interesting-links)
+<!--toc:end-->
+
 ## Interesting links
 
 - Inspired irremote.yaml: https://community.home-assistant.io/t/faking-an-ir-remote-control-using-esphome/369071/26
