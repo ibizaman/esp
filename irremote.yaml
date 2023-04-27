@@ -1,0 +1,362 @@
+esphome:
+  name: "ir-project"
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid:     !secret wifi_ssid
+  password: !secret wifi_pwd
+  manual_ip:
+    static_ip: 192.168.50.216
+    gateway: 192.168.50.1
+    subnet: 255.255.255.0
+
+captive_portal:
+
+logger:
+  level: VERBOSE
+
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+
+remote_receiver:
+  pin:
+    number: D7
+    inverted: true
+  # dump: all
+  dump:
+    - pioneer
+    - nec
+
+remote_transmitter:
+  pin: D6
+  carrier_duty_percent: 50%
+
+binary_sensor:
+  # - platform: gpio
+  #   pin: D8
+  #   name: "IR Remote, External Button"
+  #   device_class: window
+  #   on_press:
+  #     - button.press: btn_on_off
+  - platform: gpio
+    pin: D8
+    id: state_on
+    name: "IR Remote, is TV On"
+    device_class: power
+    filters:
+      - invert:
+
+  - platform: remote_receiver
+    name: "IR Remote, on/off"
+    nec:
+      address: 0x0586
+      command: 0xF00F
+    on_press:
+      then:
+        - delay: 1s
+        - button.press: btn_on_off
+  - platform: remote_receiver
+    name: "IR Remote, input"
+    nec:
+      address: 0x0586
+      command: 0xE21D
+  - platform: remote_receiver
+    name: "IR Remote, one"
+    nec:
+      address: 0x0586
+      command: 0xFF00
+    on_press:
+      then:
+        - button.press: input_chromecast
+  - platform: remote_receiver
+    name: "IR Remote, two"
+    nec:
+      address: 0x0586
+      command: 0xFE01
+    on_press:
+      then:
+        - button.press: input_jellyfin
+  - platform: remote_receiver
+    name: "IR Remote, three"
+    nec:
+      address: 0x0586
+      command: 0xFD02
+    on_press:
+      then:
+        - button.press: input_game
+  - platform: remote_receiver
+    name: "IR Remote, enter"
+    nec:
+      address: 0x0586
+      command: 0xE718
+  - platform: remote_receiver
+    name: "IR Remote, exit"
+    nec:
+      address: 0x0586
+      command: 0xE41B
+  - platform: remote_receiver
+    name: "IR Remote, up"
+    nec:
+      address: 0x0586
+      command: 0xBD42
+  - platform: remote_receiver
+    name: "IR Remote, down"
+    nec:
+      address: 0x0586
+      command: 0xBC43
+  - platform: remote_receiver
+    name: "IR Remote, left"
+    nec:
+      address: 0x0586
+      command: 0xE916
+  - platform: remote_receiver
+    name: "IR Remote, right"
+    nec:
+      address: 0x0586
+      command: 0xEA15
+  - platform: remote_receiver
+    name: "IR Remote, vol+"
+    nec:
+      address: 0x0586
+      command: 0xF30C
+  - platform: remote_receiver
+    name: "IR Remote, vol-"
+    nec:
+      address: 0x0586
+      command: 0xF20D
+  - platform: remote_receiver
+    name: "IR Remote, mute"
+    nec:
+      address: 0x0586
+      command: 0xF10E
+  - platform: remote_receiver
+    name: "IR Remote, audio"
+    nec:
+      address: 0x0586
+      command: 0xB748
+  - platform: remote_receiver
+    name: "IR Remote, caption"
+    nec:
+      address: 0x0586
+      command: 0xE31C
+  - platform: remote_receiver
+    name: "IR Remote, play"
+    nec:
+      address: 0x0586
+      command: 0x8F70
+  - platform: remote_receiver
+    name: "IR Remote, stop"
+    nec:
+      address: 0x0586
+      command: 0x8E71
+  - platform: remote_receiver
+    name: "IR Remote, pause"
+    nec:
+      address: 0x0586
+      command: 0x7E81
+  - platform: remote_receiver
+    name: "IR Remote, rewind"
+    nec:
+      address: 0x0586
+      command: 0x817E
+  - platform: remote_receiver
+    name: "IR Remote, forward"
+    nec:
+      address: 0x0586
+      command: 0x827D
+  - platform: remote_receiver
+    name: "IR Remote, start"
+    nec:
+      address: 0x0586
+      command: 0x7F80
+  - platform: remote_receiver
+    name: "IR Remote, end"
+    nec:
+      address: 0x0586
+      command: 0x807F
+
+button:
+  - platform: template
+    name: "IR Remote, Chromecast"
+    id: input_chromecast
+    on_press:
+      then:
+        - delay: 1s
+        - if:
+            condition:
+              binary_sensor.is_off: state_on
+            then:
+              - button.press: btn_on_off
+              - delay: 10s
+        - button.press: btn_tv
+        - delay: 4s
+        - button.press: btn_input
+        - delay: 200ms
+        - button.press: btn_left
+        - delay: 200ms
+        - button.press: btn_ok
+  - platform: template
+    name: "IR Remote, Jellyfin"
+    id: input_jellyfin
+    on_press:
+      then:
+        - delay: 1s
+        - if:
+            condition:
+              binary_sensor.is_off: state_on
+            then:
+              - button.press: btn_on_off
+              - delay: 10s
+        - button.press: btn_tv
+        - delay: 4s
+        - button.press: btn_input
+        - delay: 200ms
+        - button.press: btn_left
+        - delay: 200ms
+        - button.press: btn_left
+        - delay: 200ms
+        - button.press: btn_left
+        - delay: 200ms
+        - button.press: btn_ok
+  - platform: template
+    name: "IR Remote, Game"
+    id: input_game
+    on_press:
+      then:
+        - delay: 1s
+        - if:
+            condition:
+              binary_sensor.is_off: state_on
+            then:
+              - button.press: btn_on_off
+              - delay: 10s
+        - button.press: btn_tv
+        - delay: 4s
+        - button.press: btn_input
+        - delay: 200ms
+        - button.press: btn_right
+        - delay: 200ms
+        - button.press: btn_ok
+
+  - platform: template
+    name: "IR Remote, on/off"
+    id: btn_on_off
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2008
+  - platform: template
+    name: "IR Remote, tv"
+    id: btn_tv
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x200F
+  - platform: template
+    name: "IR Remote, input"
+    id: btn_input
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x200B
+
+  - platform: template
+    name: "IR Remote, ok"
+    id: btn_ok
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2044
+  - platform: template
+    name: "IR Remote, back"
+    id: btn_back
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2028
+  - platform: template
+    name: "IR Remote, up"
+    id: btn_up
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2040
+  - platform: template
+    name: "IR Remote, down"
+    id: btn_down
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2041
+  - platform: template
+    name: "IR Remote, left"
+    id: btn_left
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2007
+  - platform: template
+    name: "IR Remote, right"
+    id: btn_right
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2006
+
+  - platform: template
+    name: "IR Remote, vol+"
+    id: btn_vol_plus
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2002
+  - platform: template
+    name: "IR Remote, vol-"
+    id: btn_vol_minus
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2003
+  - platform: template
+    name: "IR Remote, mute"
+    id: btn_mute
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2009
+  - platform: template
+    name: "IR Remote, audio"
+    id: btn_audio
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x200A
+  - platform: template
+    name: "IR Remote, caption"
+    id: btn_caption
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x2039
+
+  - platform: template
+    name: "IR Remote, play"
+    id: btn_play
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x20B0
+  - platform: template
+    name: "IR Remote, stop"
+    id: btn_stop
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x20B1
+  - platform: template
+    name: "IR Remote, pause"
+    id: btn_remote_pause
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x20BA
+  - platform: template
+    name: "IR Remote, rewind"
+    id: btn_rewind
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x208F
+  - platform: template
+    name: "IR Remote, forward"
+    id: btn_forward
+    on_press:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: 0x208E

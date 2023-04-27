@@ -1,0 +1,37 @@
+esphome:
+  name: temperature-humidity
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pwd
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  # ap:
+  #   ssid: "Temp-Livingroom Fallback Hotspot"
+  #   password: !secret fallback_captive_pwd
+
+# captive_portal:
+    
+sensor:
+  - platform: dht
+    pin: "GPIO13"
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
