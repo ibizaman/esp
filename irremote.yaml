@@ -36,20 +36,65 @@ remote_transmitter:
   pin: D6
   carrier_duty_percent: 50%
 
+select:
+  - platform: template
+    name: TV Input
+    icon: mdi:video-input-hdmi
+    id: tv_input
+    options:
+      - Chromecast
+      - Jellyfin
+      - Game
+    set_action:
+      - if:
+          condition:
+            lambda: |-
+              return x.c_str() != id(tv_input).state;
+          then:
+            - delay: 1s
+            - if:
+                condition:
+                  binary_sensor.is_off: tv_is_on
+                then:
+                  - button.press: btn_on_off
+                  - delay: 7s
+                  - button.press: btn_tv
+                  - delay: 5s
+                else:
+                  - button.press: btn_tv
+                  - delay: 2s
+            - button.press: btn_input
+            - delay: 600ms
+            - if:
+                condition:
+                  lambda: |-
+                     return id(tv_input).state == "Chromecast";
+                then:
+                  - button.press: btn_left
+                else:
+                  - if:
+                      condition:
+                        lambda: |-
+                           return id(tv_input).state == "Jellyfin";
+                      then:
+                        - button.press: btn_left
+                        - delay: 600ms
+                        - button.press: btn_left
+                        - delay: 600ms
+                        - button.press: btn_left
+                      else:
+                        - button.press: btn_right
+            - delay: 600ms
+            - button.press: btn_ok
+            - lambda: |-
+                id(tv_input).publish_state(x);
+
 binary_sensor:
-  # - platform: gpio
-  #   pin: D8
-  #   name: "IR Remote, External Button"
-  #   device_class: window
-  #   on_press:
-  #     - button.press: btn_on_off
   - platform: gpio
     pin: D8
-    id: state_on
+    id: tv_is_on
     name: "IR Remote, is TV On"
     device_class: power
-    filters:
-      - invert:
 
   - platform: remote_receiver
     name: "IR Remote, on/off"
@@ -65,6 +110,10 @@ binary_sensor:
     nec:
       address: 0x0586
       command: 0xE21D
+    on_press:
+      then:
+        - delay: 200ms
+        - button.press: btn_input
   - platform: remote_receiver
     name: "IR Remote, one"
     nec:
@@ -72,7 +121,9 @@ binary_sensor:
       command: 0xFF00
     on_press:
       then:
-        - button.press: input_chromecast
+        - select.set:
+            id: tv_input
+            option: "Chromecast"
   - platform: remote_receiver
     name: "IR Remote, two"
     nec:
@@ -80,7 +131,9 @@ binary_sensor:
       command: 0xFE01
     on_press:
       then:
-        - button.press: input_jellyfin
+        - select.set:
+            id: tv_input
+            option: "Jellyfin"
   - platform: remote_receiver
     name: "IR Remote, three"
     nec:
@@ -88,17 +141,27 @@ binary_sensor:
       command: 0xFD02
     on_press:
       then:
-        - button.press: input_game
+        - select.set:
+            id: tv_input
+            option: "Game"
   - platform: remote_receiver
     name: "IR Remote, enter"
     nec:
       address: 0x0586
       command: 0xE718
+    on_press:
+      then:
+        - delay: 200ms
+        - button.press: btn_ok
   - platform: remote_receiver
     name: "IR Remote, exit"
     nec:
       address: 0x0586
       command: 0xE41B
+    on_press:
+      then:
+        - delay: 200ms
+        - button.press: btn_back
   - platform: remote_receiver
     name: "IR Remote, up"
     nec:
@@ -114,26 +177,46 @@ binary_sensor:
     nec:
       address: 0x0586
       command: 0xE916
+    on_press:
+      then:
+        - delay: 200ms
+        - button.press: btn_left
   - platform: remote_receiver
     name: "IR Remote, right"
     nec:
       address: 0x0586
       command: 0xEA15
+    on_press:
+      then:
+        - delay: 200ms
+        - button.press: btn_right
   - platform: remote_receiver
     name: "IR Remote, vol+"
     nec:
       address: 0x0586
       command: 0xF30C
+    on_press:
+      then:
+        - delay: 100ms
+        - button.press: btn_vol_plus
   - platform: remote_receiver
     name: "IR Remote, vol-"
     nec:
       address: 0x0586
       command: 0xF20D
+    on_press:
+      then:
+        - delay: 100ms
+        - button.press: btn_vol_minus
   - platform: remote_receiver
     name: "IR Remote, mute"
     nec:
       address: 0x0586
       command: 0xF10E
+    on_press:
+      then:
+        - delay: 100ms
+        - button.press: btn_mute
   - platform: remote_receiver
     name: "IR Remote, audio"
     nec:
@@ -181,68 +264,6 @@ binary_sensor:
       command: 0x807F
 
 button:
-  - platform: template
-    name: "IR Remote, Chromecast"
-    id: input_chromecast
-    on_press:
-      then:
-        - delay: 1s
-        - if:
-            condition:
-              binary_sensor.is_off: state_on
-            then:
-              - button.press: btn_on_off
-              - delay: 10s
-        - button.press: btn_tv
-        - delay: 4s
-        - button.press: btn_input
-        - delay: 200ms
-        - button.press: btn_left
-        - delay: 200ms
-        - button.press: btn_ok
-  - platform: template
-    name: "IR Remote, Jellyfin"
-    id: input_jellyfin
-    on_press:
-      then:
-        - delay: 1s
-        - if:
-            condition:
-              binary_sensor.is_off: state_on
-            then:
-              - button.press: btn_on_off
-              - delay: 10s
-        - button.press: btn_tv
-        - delay: 4s
-        - button.press: btn_input
-        - delay: 200ms
-        - button.press: btn_left
-        - delay: 200ms
-        - button.press: btn_left
-        - delay: 200ms
-        - button.press: btn_left
-        - delay: 200ms
-        - button.press: btn_ok
-  - platform: template
-    name: "IR Remote, Game"
-    id: input_game
-    on_press:
-      then:
-        - delay: 1s
-        - if:
-            condition:
-              binary_sensor.is_off: state_on
-            then:
-              - button.press: btn_on_off
-              - delay: 10s
-        - button.press: btn_tv
-        - delay: 4s
-        - button.press: btn_input
-        - delay: 200ms
-        - button.press: btn_right
-        - delay: 200ms
-        - button.press: btn_ok
-
   - platform: template
     name: "IR Remote, on/off"
     id: btn_on_off
