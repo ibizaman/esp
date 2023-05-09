@@ -7,7 +7,7 @@
 
 ## Interesting links
 
-- Inspired irremote.yaml: https://community.home-assistant.io/t/faking-an-ir-remote-control-using-esphome/369071/26
+- Inspired irremote.yaml: https://community.home-assistant.io/t/faking-an-ir-remote-control-using-esphome/369071
 
 Possible future projects inspiration:
 
