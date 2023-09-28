@@ -93,11 +93,11 @@ binary_sensor:
   - platform: gpio
     pin: D8
     id: tv_is_on
-    name: "IR Remote, is TV On"
     device_class: power
 
   - platform: remote_receiver
-    name: "IR Remote, on/off"
+    id: on_off
+    internal: true
     nec:
       address: 0x0586
       command: 0xF00F
@@ -106,7 +106,7 @@ binary_sensor:
         - delay: 1s
         - button.press: btn_on_off
   - platform: remote_receiver
-    name: "IR Remote, input"
+    id: input
     nec:
       address: 0x0586
       command: 0xE21D
@@ -115,7 +115,7 @@ binary_sensor:
         - delay: 200ms
         - button.press: btn_input
   - platform: remote_receiver
-    name: "IR Remote, one"
+    id: one
     nec:
       address: 0x0586
       command: 0xFF00
@@ -125,7 +125,7 @@ binary_sensor:
             id: tv_input
             option: "Chromecast"
   - platform: remote_receiver
-    name: "IR Remote, two"
+    id: two
     nec:
       address: 0x0586
       command: 0xFE01
@@ -135,7 +135,7 @@ binary_sensor:
             id: tv_input
             option: "Jellyfin"
   - platform: remote_receiver
-    name: "IR Remote, three"
+    id: three
     nec:
       address: 0x0586
       command: 0xFD02
@@ -145,7 +145,7 @@ binary_sensor:
             id: tv_input
             option: "Game"
   - platform: remote_receiver
-    name: "IR Remote, enter"
+    id: enter
     nec:
       address: 0x0586
       command: 0xE718
@@ -154,7 +154,7 @@ binary_sensor:
         - delay: 200ms
         - button.press: btn_ok
   - platform: remote_receiver
-    name: "IR Remote, exit"
+    id: exit_input
     nec:
       address: 0x0586
       command: 0xE41B
@@ -163,17 +163,17 @@ binary_sensor:
         - delay: 200ms
         - button.press: btn_back
   - platform: remote_receiver
-    name: "IR Remote, up"
+    id: up
     nec:
       address: 0x0586
       command: 0xBD42
   - platform: remote_receiver
-    name: "IR Remote, down"
+    id: down
     nec:
       address: 0x0586
       command: 0xBC43
   - platform: remote_receiver
-    name: "IR Remote, left"
+    id: left
     nec:
       address: 0x0586
       command: 0xE916
@@ -182,7 +182,7 @@ binary_sensor:
         - delay: 200ms
         - button.press: btn_left
   - platform: remote_receiver
-    name: "IR Remote, right"
+    id: right
     nec:
       address: 0x0586
       command: 0xEA15
@@ -191,7 +191,7 @@ binary_sensor:
         - delay: 200ms
         - button.press: btn_right
   - platform: remote_receiver
-    name: "IR Remote, vol+"
+    id: vol_plus
     nec:
       address: 0x0586
       command: 0xF30C
@@ -200,7 +200,7 @@ binary_sensor:
         - delay: 100ms
         - button.press: btn_vol_plus
   - platform: remote_receiver
-    name: "IR Remote, vol-"
+    id: vol_minus
     nec:
       address: 0x0586
       command: 0xF20D
@@ -209,7 +209,7 @@ binary_sensor:
         - delay: 100ms
         - button.press: btn_vol_minus
   - platform: remote_receiver
-    name: "IR Remote, mute"
+    id: mute
     nec:
       address: 0x0586
       command: 0xF10E
@@ -218,47 +218,47 @@ binary_sensor:
         - delay: 100ms
         - button.press: btn_mute
   - platform: remote_receiver
-    name: "IR Remote, audio"
+    id: audio
     nec:
       address: 0x0586
       command: 0xB748
   - platform: remote_receiver
-    name: "IR Remote, caption"
+    id: caption
     nec:
       address: 0x0586
       command: 0xE31C
   - platform: remote_receiver
-    name: "IR Remote, play"
+    id: play
     nec:
       address: 0x0586
       command: 0x8F70
   - platform: remote_receiver
-    name: "IR Remote, stop"
+    id: stop
     nec:
       address: 0x0586
       command: 0x8E71
   - platform: remote_receiver
-    name: "IR Remote, pause"
+    id: pause_input
     nec:
       address: 0x0586
       command: 0x7E81
   - platform: remote_receiver
-    name: "IR Remote, rewind"
+    id: rewind_input
     nec:
       address: 0x0586
       command: 0x817E
   - platform: remote_receiver
-    name: "IR Remote, forward"
+    id: forward
     nec:
       address: 0x0586
       command: 0x827D
   - platform: remote_receiver
-    name: "IR Remote, start"
+    id: start
     nec:
       address: 0x0586
       command: 0x7F80
   - platform: remote_receiver
-    name: "IR Remote, end"
+    id: end
     nec:
       address: 0x0586
       command: 0x807F
