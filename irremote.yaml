@@ -68,14 +68,14 @@ select:
             - if:
                 condition:
                   lambda: |-
-                     return id(tv_input).state == "Chromecast";
+                     return x.c_str() == "Chromecast";
                 then:
                   - button.press: btn_left
                 else:
                   - if:
                       condition:
                         lambda: |-
-                           return id(tv_input).state == "Jellyfin";
+                           return x.c_str() == "Jellyfin";
                       then:
                         - button.press: btn_left
                         - delay: 600ms
