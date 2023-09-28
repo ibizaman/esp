@@ -1,0 +1,60 @@
+# https://community.home-assistant.io/t/which-esp32-board-is-the-esp-wroom-32/93728/4
+# https://www.espressif.com/en/products/devkits/esp32-devkitc/overview
+# https://esphome.io/devices/nodemcu_esp32.html
+
+esphome:
+  name: "irrigation"
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  ssid:     !secret wifi_ssid
+  password: !secret wifi_pwd
+  manual_ip:
+    static_ip: 192.168.50.217
+    gateway: 192.168.50.1
+    subnet: 255.255.255.0
+
+logger:
+  level: VERBOSE
+
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+sprinkler:
+  - id: sprinkler_ctrlr
+    # main_switch: "Sprinklers"
+    # auto_advance_switch: "Sprinklers Auto Advance"
+    # valve_open_delay: 30s
+    valves:
+      - valve_switch: "Valve du jardin"
+        # enable_switch: "Activer valve du jardin"
+        run_duration_number:
+          id: run_duration_valve_d0
+          name: "Temps d'activation de la valve du jardin"
+          unit_of_measurement: min
+          initial_value: 9
+          min_value: 1
+          max_value: 20
+        valve_switch_id: lawn_sprinkler_valve_sw0
+      # - valve_switch: "Valve du fond"
+      #   enable_switch: "Activer valve du fond"
+      #   run_duration_number:
+      #     id: run_duration_valve_d1
+      #     name: "Temps d'activation de la valve du fond"
+      #     unit_of_measurement: min
+      #     initial_value: 6
+      #     min_value: 1
+      #     max_value: 20
+      #   valve_switch_id: lawn_sprinkler_valve_sw1
+
+switch:
+  - platform: gpio
+    id: lawn_sprinkler_valve_sw0
+    pin: 13
+  # - platform: gpio
+  #   id: lawn_sprinkler_valve_sw1
+  #   pin: 2
