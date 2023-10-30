@@ -13,6 +13,7 @@
         pkgs.mkShell {
           buildInputs = [
             pkgs.esphome
+            pkgs.esptool
           ];
         };
   };

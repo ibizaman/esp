@@ -20,6 +20,12 @@ Run code and see logs with:
 esphome run $file.yaml
 ```
 
+## WLED
+
+```bash
+esptool.py write_flash 0x0 ~/Downloads/WLED_0.14.0_ESP8266.bin
+```
+
 ## Interesting links
 
 - Sensors: https://www.elegoo.com/products/elegoo-37-in-1-sensor-kit
