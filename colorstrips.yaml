@@ -1,0 +1,63 @@
+esphome:
+  name: "colors-strips"
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid:     !secret wifi_ssid
+  password: !secret wifi_pwd
+  manual_ip:
+    static_ip: 192.168.50.218
+    gateway: 192.168.50.1
+    subnet: 255.255.255.0
+
+captive_portal:
+
+logger:
+  level: VERBOSE
+
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+
+remote_receiver:
+  pin:
+    number: D7
+    inverted: true
+  dump:
+  #   - pioneer
+    - nec
+
+remote_transmitter:
+  pin: D6
+  carrier_duty_percent: 50%
+
+button:
+  - platform: template
+    name: "Color Strips, red"
+    id: btn_red
+    on_press:
+      - remote_transmitter.transmit_nec:
+          address: 0xEF00
+          command: 0xFB04
+
+
+  - platform: template
+    name: "Color Strips, green"
+    id: btn_green
+    on_press:
+      - remote_transmitter.transmit_nec:
+          address: 0xEF00
+          command: 0xFA05
+
+
+  - platform: template
+    name: "Color Strips, blue"
+    id: btn_blue
+    on_press:
+      - remote_transmitter.transmit_nec:
+          address: 0xEF00
+          command: 0xF906
