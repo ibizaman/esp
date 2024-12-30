@@ -1,0 +1,60 @@
+esphome:
+  name: "rgb"
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid:     !secret wifi_ssid
+  password: !secret wifi_pwd
+  manual_ip:
+    static_ip: 192.168.1.202
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+captive_portal:
+
+logger:
+  level: VERBOSE
+
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+output:
+  - platform: esp8266_pwm
+    pin: GPIO14
+    frequency: 1000 Hz
+    id: red
+  - platform: esp8266_pwm
+    pin: GPIO12
+    frequency: 1000 Hz
+    id: green
+  - platform: esp8266_pwm
+    pin: GPIO13
+    frequency: 1000 Hz
+    id: blue
+  - platform: esp8266_pwm
+    pin: GPIO16
+    frequency: 1000 Hz
+    id: laser
+
+# binary_sensor:
+#   - platform: gpio
+#     pin:
+#       number: GPIO16
+#       mode:
+#         input: true
+#         # pullup: true
+#     name: LASER
+
+light:
+  - platform: rgb
+    name: "Lumiere spatiale"
+    red: red
+    green: green
+    blue: blue
+  - platform: monochromatic
+    name: "Laser"
+    output: laser
