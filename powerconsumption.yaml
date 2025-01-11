@@ -1,0 +1,104 @@
+# Inspiration: https://github.com/klaasnicolaas/home-assistant-glow/blob/develop/components/pulse_meter.yaml
+
+esphome:
+  name: "power-consumption"
+  friendly_name: Power Consumption
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid:     !secret wifi_ssid
+  password: !secret wifi_pwd
+  manual_ip:
+    static_ip: 192.168.1.80
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+captive_portal:
+
+api:
+  password: !secret api_pwd
+
+ota:
+  password: !secret ota_pwd
+
+logger:
+  level: VERBOSE
+
+# Enable time component to reset energy at midnight
+# https://esphome.io/components/time/homeassistant.html
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+number:
+  # Set the pulse rate of the LED on your meter
+  - platform: template
+    id: select_pulse_rate
+    name: 'Pulse rate - imp/kWh'
+    optimistic: true
+    mode: box
+    min_value: 100
+    max_value: 10000
+    step: 100
+    restore_value: yes
+    initial_value: 1000
+
+
+# switch:
+#   - platform: gpio
+#     pin: GPIO2
+#     id: status_led
+#     inverted: true
+
+light:
+  - platform: binary
+    internal: true
+    id: status_led
+    name: Red
+    output: output_red
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: output_red
+    inverted: true
+
+
+
+sensor:
+  # https://esphome.io/components/sensor/pulse_meter
+  - pin: D1
+
+    platform: pulse_meter
+    name: "Power Consumption"
+    id: sensor_energy_pulse_meter
+
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:home-lightning-bolt"
+    internal_filter: 20ms # Assuming maximum load of 16 kW and 10000 impulses per kWh, any pulses faster than 22.5 ms would exceed load. -10% ~= 20 ms.
+    accuracy_decimals: 0
+    on_raw_value:
+      then:
+        - light.turn_on:
+            id: status_led
+        - delay: 0.2s
+        - light.turn_off:
+            id: status_led
+    filters:
+      - lambda: return x * ((60.0 / id(select_pulse_rate).state) * 1000.0);
+
+  # Total daily usage
+  - platform: total_daily_energy
+    id: sensor_total_daily_energy
+    name: 'Daily Power Consumption'
+    power_id: sensor_energy_pulse_meter
+    unit_of_measurement: kWh
+    icon: mdi:circle-slice-3
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
