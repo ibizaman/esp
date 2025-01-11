@@ -26,6 +26,10 @@ esphome run $file.yaml
 esptool.py write_flash 0x0 ~/Downloads/WLED_0.14.0_ESP8266.bin
 ```
 
+## Somfy
+
+https://github.com/rstrouse/ESPSomfy-RTS/wiki/Simple-ESPSomfy-RTS-device
+
 ## Interesting links
 
 - Sensors: https://www.elegoo.com/products/elegoo-37-in-1-sensor-kit
