@@ -19,6 +19,11 @@
             buildInputs = [
               pkgs.esphome
               pkgs.esptool
+
+              # Needed at least for seeedd1001
+              pkgs.cmake
+              pkgs.ninja
+              pkgs.libusb1
             ];
           };
       };
