@@ -5,16 +5,21 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = all@{ self, nixpkgs, ... }: {
-    devShell.x86_64-linux =
-      let
-        pkgs = import nixpkgs { system = "x86_64-linux"; };
-      in
-        pkgs.mkShell {
-          buildInputs = [
-            pkgs.esphome
-            pkgs.esptool
-          ];
+  outputs = all@{ self, nixpkgs, ... }:
+    let
+      pkgs = import nixpkgs { system = "x86_64-linux"; };
+    in
+      {
+        packages.x86_64-linux = {
+          inherit (pkgs) esphome esptool;
         };
-  };
+
+        devShell.x86_64-linux =
+          pkgs.mkShell {
+            buildInputs = [
+              pkgs.esphome
+              pkgs.esptool
+            ];
+          };
+      };
 }
