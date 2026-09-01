@@ -5,26 +5,36 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = all@{ self, nixpkgs, ... }:
+  outputs = { nixpkgs, ... }:
     let
       pkgs = import nixpkgs { system = "x86_64-linux"; };
+
+      fhs = pkgs.buildFHSEnv {
+        name = "esphome-fhs";
+
+        targetPkgs = pkgs: with pkgs; [
+          esphome
+          esptool
+
+          # Needed at least for seeedd1001
+          cmake
+          ninja
+          libusb1
+        ];
+
+        runScript = "bash";
+      };
     in
       {
-        packages.x86_64-linux = {
-          inherit (pkgs) esphome esptool;
-        };
-
         devShell.x86_64-linux =
           pkgs.mkShell {
-            buildInputs = [
-              pkgs.esphome
-              pkgs.esptool
-
-              # Needed at least for seeedd1001
-              pkgs.cmake
-              pkgs.ninja
-              pkgs.libusb1
+            packages = [
+              fhs
             ];
+
+            shellHook = ''
+              echo "Run: esphome-fhs"
+            '';
           };
       };
 }
