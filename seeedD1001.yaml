@@ -9,5 +9,6 @@ wifi:
 packages:
   setup:
     url: https://github.com/lamiskin/espcontrol-community-devices/
+    ref: community-v0.4.1-upstream.v2.8.1
     file: devices/seeed-esp32-p4-reterminal-d1001/packages.yaml
     refresh: 1s
