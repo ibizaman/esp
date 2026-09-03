@@ -1,0 +1,10 @@
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pwd
+
+packages:
+  setup:
+    url: https://github.com/EverythingSmartHome/everything-presence-lite
+    ref: v1.5.0
+    file: everything-presence-lite-ha.yaml
+    refresh: 1s
