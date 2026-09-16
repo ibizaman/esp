@@ -8,10 +8,16 @@ wifi:
 
 packages:
   setup:
-    # url: https://github.com/lamiskin/espcontrol-community-devices/
-    # ref: community-v0.4.1-upstream.v2.8.1
+    url: https://github.com/lamiskin/espcontrol-community-devices/
+    ref:  community-v0.9.1-upstream.v2.9.0-preview.1
     # url: https://github.com/ibizaman/espcontrol-community-devices/
-    url: file:///home/timi/Projects/espcontrol-community-devices/
-    ref: main
+    # url: file:///home/timi/Projects/espcontrol-community-devices/
+    # ref: main
     file: devices/seeed-esp32-p4-reterminal-d1001/packages.yaml
     refresh: 1s
+
+# external_components:
+#   - source:
+#       type: local
+#       path: components
+#     components: [gsl3670]
